@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Catalog</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <div class="container">
+          <h1>🛍️ Product Catalog</h1>
+        </div>
+      </header>
+
+      <main class="main">
+        <div class="container">
+          <!-- Filters -->
+          <div class="filters">
+            <div class="filter-group">
+              <input
+                type="text"
+                id="search"
+                placeholder="Search products..."
+                class="search-input"
+              />
+            </div>
+
+            <div class="filter-group">
+              <select id="category" class="filter-select">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <select id="brand" class="filter-select">
+                <option value="">All Brands</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Price Range:</label>
+              <input
+                type="number"
+                id="min_price"
+                placeholder="Min"
+                class="price-input"
+              />
+              <input
+                type="number"
+                id="max_price"
+                placeholder="Max"
+                class="price-input"
+              />
+            </div>
+
+            <div class="filter-group">
+              <select id="sort_by" class="filter-select">
+                <option value="created_at:DESC">Newest First</option>
+                <option value="price:ASC">Price: Low to High</option>
+                <option value="price:DESC">Price: High to Low</option>
+                <option value="name:ASC">Name: A to Z</option>
+                <option value="rating:DESC">Highest Rated</option>
+              </select>
+            </div>
+
+            <button id="generate-data" class="btn btn-secondary">
+              Generate Sample Data
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div id="loading" class="loading hidden">Loading...</div>
+
+          <!-- Products Grid -->
+          <div id="products-grid" class="products-grid"></div>
+
+          <!-- Pagination -->
+          <div id="pagination" class="pagination"></div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

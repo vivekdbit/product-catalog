@@ -1,18 +1,18 @@
 {
-  "name": "@product-catalog/source",
-  "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {},
+  "name": "product-catalog",
   "private": true,
-  "dependencies": {},
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd backend && npm run build && cd ../frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
   "devDependencies": {
-    "@nx/js": "21.4.1",
-    "@swc-node/register": "~1.9.1",
-    "@swc/core": "~1.5.7",
-    "@swc/helpers": "~0.5.11",
-    "nx": "21.4.1",
-    "prettier": "^2.6.2",
-    "tslib": "^2.3.0",
-    "typescript": "~5.8.2"
+    "concurrently": "^8.2.2"
   }
 }
