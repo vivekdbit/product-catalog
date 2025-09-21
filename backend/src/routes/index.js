@@ -4,7 +4,7 @@ import { productRoutes } from "../modules/products/index.js";
 const router = Router();
 
 // API version info
-router.get("/", (req, res) => {
+router.get("/v1/", (req, res) => {
   res.json({
     message: "Product Catalog API",
     version: "1.0.0",
@@ -28,7 +28,7 @@ router.get("/", (req, res) => {
 });
 
 // Version-specific health check
-router.get("/health", (req, res) => {
+router.get("/v1/health", (req, res) => {
   res.json({
     status: "OK",
     version: "1.0.0",

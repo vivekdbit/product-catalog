@@ -10,7 +10,23 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "cd backend && npm run build && cd ../frontend && npm run build",
-    "start": "cd backend && npm start"
+    "start": "cd backend && npm start",
+    "docker:setup": "./scripts/setup.sh",
+    "docker:start": "./scripts/start.sh",
+    "docker:dev": "./scripts/dev.sh",
+    "docker:stop": "./scripts/stop.sh",
+    "docker:restart": "./scripts/restart.sh",
+    "docker:clean": "./scripts/clean.sh",
+    "docker:logs": "./scripts/logs.sh",
+    "docker:build": "./scripts/build.sh",
+    "docker:health": "./scripts/health.sh",
+    "docker:migrate": "./scripts/migrate.sh",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:ps": "docker-compose ps",
+    "docker:exec:backend": "docker-compose exec backend sh",
+    "docker:exec:postgres": "docker-compose exec postgres psql -U postgres -d product_catalog",
+    "docker:exec:redis": "docker-compose exec redis redis-cli"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

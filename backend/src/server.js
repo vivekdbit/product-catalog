@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../../.env") });
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BACKEND_PORT || 3001;
 const API_VERSION = process.env.API_VERSION || "v1";
 
 // Middleware
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
     console.log(
       `${new Date().toISOString()} - ${req.method} ${req.path} - API Version: ${
-        req.headers["api-version"] || "default"
+        req.headers["api-version"] || API_VERSION
       }`
     );
     next();

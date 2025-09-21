@@ -1,20 +1,20 @@
 # 🛍️ Product Catalog System
 
-A modern, scalable product catalog application with dynamic filtering capabilities. Built with **Node.js**, **Express**, **TypeORM**, **PostgreSQL**, and **Vanilla JavaScript** - featuring proper entity management, repositories, and migrations.
+A modern, scalable product catalog application with dynamic filtering capabilities. Built with **Node.js**, **Express**, **TypeORM**, **PostgreSQL**, **Redis**, and **Vanilla JavaScript** - featuring proper entity management, repositories, and migrations.
 
 ## 🚀 Features
 
 ### Backend API
 
 - **RESTful API** with modular architecture
-- **TypeORM Integration** with entities, repositories, and migrations
+- **TypeORM Integration** with entities, repositories, and custom migrations
 - **Dynamic Filtering** by category, brand, price range, and search
 - **Pagination** with metadata
 - **Full-text Search** across product names, descriptions, and brands
 - **CRUD Operations** for products
-- **Sample Data Generation** for testing
+- **Redis Caching** for improved performance
 - **PostgreSQL Database** with optimized indexes
-- **Database Migrations** for schema management
+- **Custom Migration System** for schema management
 - **Repository Pattern** for clean data access
 - **Joi Validation** with comprehensive input validation
 
@@ -27,278 +27,336 @@ A modern, scalable product catalog application with dynamic filtering capabiliti
 - **Clean UI** with modern styling
 - **Sample Data Generator** button
 
+### Docker Infrastructure
+
+- **Full containerization** with Docker Compose
+- **Development and production** configurations
+- **Automatic migrations** on startup
+- **Health checks** for all services
+- **Hot reload** in development mode
+- **Nginx reverse proxy** for frontend
+
+## 📋 Prerequisites
+
+- **Docker** 20.10+ ([Download here](https://docs.docker.com/get-docker/))
+- **Docker Compose** v2.0+ ([Install guide](https://docs.docker.com/compose/install/))
+
+## ⚡ Quick Start
+
+### 1. Clone and Setup
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd product-catalog
+
+# Copy environment template
+cp .env.example .env
+```
+
+### 2. Configure Environment
+
+Edit `.env` file and update the passwords:
+
+```bash
+# Generate secure passwords
+openssl rand -base64 32  # Copy for DB_PASSWORD
+openssl rand -base64 32  # Copy for REDIS_PASSWORD
+
+# Edit .env file
+nano .env  # Update DB_PASSWORD and REDIS_PASSWORD
+```
+
+### 3. Start the Application
+
+```bash
+# Setup and start (one command does it all!)
+npm run docker:setup
+npm run docker:start
+
+# Visit the application
+open http://localhost:3000
+```
+
+That's it! 🎉 Your application is now running with all services containerized.
+
+## 🌐 Application URLs
+
+| Service          | URL                                 | Description                |
+| ---------------- | ----------------------------------- | -------------------------- |
+| **Frontend**     | http://localhost:3000               | Main application interface |
+| **Backend API**  | http://localhost:3001/api/v1        | REST API endpoints         |
+| **Health Check** | http://localhost:3001/api/v1/health | System health status       |
+| **PostgreSQL**   | localhost:5432                      | Database connection        |
+| **Redis**        | localhost:6379                      | Cache connection           |
+
+## 🔧 Available Commands
+
+### Main Commands
+
+```bash
+npm run docker:setup     # Initial setup and validation
+npm run docker:start     # Start all services (production mode)
+npm run docker:dev       # Start in development mode (hot reload)
+npm run docker:stop      # Stop all services
+npm run docker:health    # Check service health
+npm run docker:logs      # View all logs
+```
+
+### Migration Commands
+
+```bash
+npm run docker:migrate run     # Run pending migrations
+npm run docker:migrate revert  # Revert last migration
+npm run docker:migrate sync    # Sync schema (development)
+npm run docker:migrate reset   # Reset database and seed
+npm run docker:migrate seed    # Seed sample data
+```
+
+### Development Commands
+
+```bash
+npm run docker:logs backend    # View backend logs
+npm run docker:logs frontend   # View frontend logs
+npm run docker:restart         # Restart all services
+npm run docker:build          # Build Docker images
+npm run docker:clean          # Clean up everything
+```
+
+### Direct Access
+
+```bash
+npm run docker:exec:backend   # Access backend container
+npm run docker:exec:postgres  # Access PostgreSQL CLI
+npm run docker:exec:redis     # Access Redis CLI
+```
+
+## 🔄 Development Workflow
+
+### Daily Development
+
+```bash
+# Start development environment
+npm run docker:dev
+
+# Make changes to your code...
+# Frontend and backend will auto-reload!
+
+# Check logs if needed
+npm run docker:logs
+
+# Stop when done
+npm run docker:stop
+```
+
+### Database Changes
+
+```bash
+# After modifying entities, run migrations
+npm run docker:migrate run
+
+# Check migration status
+npm run docker:exec:backend
+npm run migration:run  # Inside container
+
+# Reset database if needed (careful!)
+npm run docker:migrate reset
+```
+
+### Adding New Features
+
+```bash
+# Start development
+npm run docker:dev
+
+# Create new migration (manual)
+# Add file to backend/src/database/migrations/
+
+# Run migrations
+npm run docker:migrate run
+
+# Test changes...
+```
+
 ## 🏗️ Project Structure
 
 ```
 product-catalog/
-├── backend/                          # Node.js API Server
+├── backend/                    # Node.js API Server
 │   ├── src/
-│   │   ├── modules/
-│   │   │   └── products/            # Product Module
-│   │   │       ├── controllers/     # HTTP request handlers
-│   │   │       ├── services/        # Business logic
-│   │   │       ├── repositories/    # Data access layer
-│   │   │       ├── entities/        # TypeORM entities
-│   │   │       ├── routes/          # Route definitions
-│   │   │       └── index.js         # Module exports
-│   │   ├── routes/
-│   │   │   └── index.js             # Main API routes
+│   │   ├── modules/products/   # Product module
 │   │   ├── database/
-│   │   │   ├── data-source.js       # TypeORM configuration
-│   │   │   ├── migrations/          # Database migrations
-│   │   │   └── seeds/               # Sample data
-│   │   ├── middleware/              # Custom middleware
-│   │   ├── utils/                   # Utility functions
-│   │   └── server.js                # Main server file
-│   ├── package.json
-│   └── nodemon.json
-├── frontend/                         # Vanilla JS Frontend
+│   │   │   ├── migrations/     # Your custom migrations
+│   │   │   ├── scripts/        # Migration runner scripts
+│   │   │   └── seeds/          # Sample data
+│   │   ├── config/            # Configuration files
+│   │   └── server.js          # Main server file
+│   └── package.json
+├── frontend/                   # Vanilla JS Frontend
 │   ├── src/
-│   │   ├── main.js                  # Main JavaScript file
-│   │   └── style.css                # Styling
-│   ├── index.html                   # Main HTML file
-│   ├── package.json
-│   └── vite.config.js
-├── docker-compose.yml               # PostgreSQL setup
-├── package.json                     # Root package.json
-├── .env                            # Environment variables
-└── setup.sh                       # Setup script
+│   ├── index.html
+│   └── package.json
+├── docker/                     # Docker configuration
+│   ├── Dockerfile.backend
+│   ├── Dockerfile.frontend
+│   ├── nginx.conf
+│   └── postgres-init/
+├── scripts/                    # Management scripts
+│   ├── setup.sh
+│   ├── start.sh
+│   ├── migrate.sh
+│   └── ...
+├── docker-compose.yml
+├── .env.example               # Environment template
+└── README.md
 ```
 
-## 📋 Prerequisites
+## 🔍 Troubleshooting
 
-- **Node.js** 18+ ([Download here](https://nodejs.org/))
-- **npm** (comes with Node.js)
-
-## ⚡ Quick Start
-
-### Option 1: Automated Setup (Recommended)
+### Services Won't Start
 
 ```bash
-# Clone or create the project directory
-mkdir product-catalog && cd product-catalog
+# Check service health
+npm run docker:health
 
-# Copy all the provided files into the directory structure
+# View logs for issues
+npm run docker:logs
 
-# Run the setup script
-chmod +x setup.sh
-./setup.sh
-
-# Start the application
-npm run dev
+# Restart services
+npm run docker:restart
 ```
 
-### Option 2: Manual Setup
+### Port Conflicts
 
 ```bash
-# 1. Install dependencies
-npm install
-cd backend && npm install && cd ..
-cd frontend && npm install && cd ..
+# Check what's using ports
+lsof -i :3000
+lsof -i :3001
 
-# 2. Create environment file
-cp .env.example .env
-# Edit .env and set your database password
-
-# 3. Start PostgreSQL database
-docker-compose up -d
-
-# 4. Start the application
-npm run dev
+# Stop conflicting services or change ports in .env
 ```
 
-## 🔧 Environment Configuration
-
-Create a `.env` file in the root directory:
-
-```env
-# Application
-NODE_ENV=development
-PORT=3001
-FRONTEND_URL=http://localhost:3000
-
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=your_secure_password_here
-DB_NAME=product_catalog
-```
-
-⚠️ **Important**: Change `DB_PASSWORD` to a secure password!
-
-## 🚦 Available Scripts
-
-### Root Scripts
+### Database Issues
 
 ```bash
-npm run dev              # Start both backend and frontend
-npm run dev:backend      # Start only backend (port 3001)
-npm run dev:frontend     # Start only frontend (port 3000)
-npm run build            # Build both applications
+# Check database logs
+npm run docker:logs postgres
+
+# Access database directly
+npm run docker:exec:postgres
+
+# Reset database (removes all data!)
+npm run docker:migrate reset
 ```
 
-### Backend Scripts
+### Migration Issues
 
 ```bash
-cd backend
-npm run dev              # Start with nodemon (auto-reload)
-npm start                # Start production server
-npm run migration:run    # Run pending migrations
-npm run migration:revert # Revert last migration
-npm run db:seed          # Seed database with sample data
-npm run db:reset         # Reset schema and seed data (development only)
-npm test                 # Run tests (when implemented)
-```
-
-### Frontend Scripts
-
-```bash
-cd frontend
-npm run dev              # Start Vite dev server
-npm run build            # Build for production
-npm run preview          # Preview production build
-```
-
-## 🌐 Application URLs
-
-| Service               | URL                                 | Description                |
-| --------------------- | ----------------------------------- | -------------------------- |
-| **Frontend**          | http://localhost:3000               | Main application interface |
-| **Backend API**       | http://localhost:3001               | API server                 |
-| **API Documentation** | http://localhost:3001/api           | API endpoints overview     |
-| **V1 API Base**       | http://localhost:3001/api/v1        | Current API version        |
-| **Health Check**      | http://localhost:3001/api/v1/health | Server health status       |
-| **Database**          | localhost:5432                      | PostgreSQL database        |
-
-## 📡 API Endpoints & Versioning
-
-### API Versioning Strategy
-
-This API uses **URL-based versioning** with support for multiple versioning methods:
-
-1. **URL Versioning** (Recommended): `/api/v1/products`
-2. **Header Versioning**: `API-Version: v1`
-3. **Media Type Versioning**: `Accept: application/vnd.productcatalog.v1+json`
-
-#### Current API Version: **v1**
-
-| Version | Status     | Support Until | Notes                              |
-| ------- | ---------- | ------------- | ---------------------------------- |
-| **v1**  | ✅ Current | Ongoing       | Stable, recommended for production |
-| v2      | 🚧 Planned | -             | Advanced features, GraphQL support |
-
-### V1 API Endpoints
-
-| Method     | Endpoint                           | Description                            |
-| ---------- | ---------------------------------- | -------------------------------------- |
-| **GET**    | `/api/v1/products`                 | Get products with filters & pagination |
-| **GET**    | `/api/v1/products/:id`             | Get single product by ID               |
-| **POST**   | `/api/v1/products`                 | Create new product                     |
-| **PUT**    | `/api/v1/products/:id`             | Update existing product                |
-| **DELETE** | `/api/v1/products/:id`             | Delete product (soft delete)           |
-| **GET**    | `/api/v1/products/search`          | Search products                        |
-| **GET**    | `/api/v1/products/filters/options` | Get filter options                     |
-| **POST**   | `/api/v1/products/generate`        | Generate sample data                   |
-| **GET**    | `/api/v1/health`                   | API health check                       |
-
-### Query Parameters (GET /api/v1/products)
-
-| Parameter    | Type   | Description                        | Example                 |
-| ------------ | ------ | ---------------------------------- | ----------------------- |
-| `page`       | number | Page number (default: 1)           | `?page=2`               |
-| `limit`      | number | Items per page (default: 20)       | `?limit=10`             |
-| `category`   | string | Filter by category                 | `?category=Electronics` |
-| `brand`      | string | Filter by brand                    | `?brand=Apple`          |
-| `min_price`  | number | Minimum price filter               | `?min_price=100`        |
-| `max_price`  | number | Maximum price filter               | `?max_price=500`        |
-| `search`     | string | Search in name, description, brand | `?search=smartphone`    |
-| `sort_by`    | string | Sort field                         | `?sort_by=price`        |
-| `sort_order` | string | Sort direction (ASC/DESC)          | `?sort_order=ASC`       |
-
-### Example API Calls with Versioning
-
-```bash
-# Get all products (v1)
-curl "http://localhost:3001/api/v1/products"
-
-# Get products with filters (v1)
-curl "http://localhost:3001/api/v1/products?category=Electronics&min_price=100&max_price=500&page=1&limit=10"
-
-# Search products (v1)
-curl "http://localhost:3001/api/v1/products/search?q=smartphone&page=1"
-
-# Get filter options (v1)
-curl "http://localhost:3001/api/v1/products/filters/options"
-
-# Health check (v1)
-curl "http://localhost:3001/api/v1/health"
-```
-
-#### Generate Sample Data
-
-```bash
-# Generate sample data (v1)
-curl -X POST "http://localhost:3001/api/v1/products/generate" \
-     -H "Content-Type: application/json" \
-     -d '{"count": 100}'
-```
-
-## 🎯 Getting Started Guide
-
-### 1. First Time Setup
-
-```bash
-# After running setup, run migrations and seed data
+# Check migration status
+npm run docker:exec:backend
 npm run migration:run
-npm run db:seed
+
+# View backend logs
+npm run docker:logs backend
+
+# Manual migration troubleshooting
+npm run docker:exec:backend
+# Then debug inside container
 ```
 
-### 2. Open the Application
+## 🧹 Cleanup
 
-- Go to http://localhost:3000
-- You should see the product catalog interface
-- Use the "Generate Sample Data" button to create test products
+### Stop Services (Preserve Data)
 
-### 3. Test the Features
+```bash
+npm run docker:stop
+```
 
-- **Search**: Type in the search box to find products
-- **Filter**: Use category and brand dropdowns
-- **Price Range**: Set min/max price filters
-- **Sort**: Change sorting options
-- **Pagination**: Navigate through pages
+### Full Cleanup (Removes Everything)
 
-## 🔒 Security Features
+```bash
+npm run docker:clean
+# Will ask for confirmation before removing data
+```
 
-- **Helmet.js**: Security headers
-- **CORS**: Cross-origin resource sharing protection
-- **Input Validation**: SQL injection prevention
-- **Error Handling**: Secure error messages
-- **Environment Variables**: Sensitive data protection
+### Manual Cleanup
+
+```bash
+# Stop and remove containers
+docker-compose down
+
+# Remove with data volumes (careful!)
+docker-compose down -v
+```
+
+## 📊 API Endpoints
+
+### Products API
+
+| Method | Endpoint               | Description               |
+| ------ | ---------------------- | ------------------------- |
+| GET    | `/api/v1/products`     | Get products with filters |
+| GET    | `/api/v1/products/:id` | Get single product        |
+| POST   | `/api/v1/products`     | Create new product        |
+| PUT    | `/api/v1/products/:id` | Update product            |
+| DELETE | `/api/v1/products/:id` | Delete product            |
+
+### Query Parameters
+
+```bash
+# Filter products
+GET /api/v1/products?category=Electronics&brand=Apple&min_price=100&max_price=500
+
+# Search products
+GET /api/v1/products?search=smartphone&page=1&limit=10
+
+# Sort products
+GET /api/v1/products?sort_by=price&sort_order=ASC
+```
+
+## 🔐 Security Notes
+
+- **Change default passwords** in `.env` before deployment
+- **Use strong passwords**: `openssl rand -base64 32`
+- **Don't commit `.env`** to version control
+- **Use Docker secrets** in production
+- **Regularly update dependencies**
 
 ## 🚀 Production Deployment
-
-### Environment Variables for Production
-
-```env
-NODE_ENV=production
-PORT=3001
-FRONTEND_URL=https://yourdomain.com
-DB_HOST=your-db-host
-DB_PASSWORD=secure-production-password
-```
 
 ### Build for Production
 
 ```bash
-# Build both applications
-npm run build
-
-# Start production server
-cd backend && npm start
+npm run docker:build
+npm run docker:start
 ```
 
-## 🔮 Future Enhancements
+### Environment Configuration
 
-- [ ] API rate limiting
-- [ ] Caching with Redis
+```bash
+# Update .env for production
+NODE_ENV=production
+DB_PASSWORD=<strong-production-password>
+REDIS_PASSWORD=<strong-redis-password>
+```
+
+## 💡 Pro Tips
+
+- Use `npm run docker:health` to verify all services are working
+- Check `npm run docker:logs` for debugging issues
+- Development mode has hot reload for both frontend and backend
+- Migrations run automatically when starting services
+- Use `npm run docker:migrate reset` to start fresh with sample data
+
+## 🆘 Getting Help
+
+1. **Check service health**: `npm run docker:health`
+2. **View logs**: `npm run docker:logs [service]`
+3. **Access containers**: `npm run docker:exec:[service]`
+4. **Reset everything**: `npm run docker:clean && npm run docker:start`
+
+---
+
+**Happy coding!** 🎉
+
+If you encounter any issues, check the troubleshooting section or view the logs for more details.

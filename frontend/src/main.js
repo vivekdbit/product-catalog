@@ -1,4 +1,4 @@
-const API_BASE = "/api/v1";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 let currentPage = 1;
 let currentFilters = {};
@@ -60,7 +60,7 @@ function setupEventListeners() {
 // Load filter options
 async function loadFilterOptions() {
   try {
-    const response = await fetch(`${API_BASE}/products/filters/options`);
+    const response = await fetch(`${API_BASE}/api/v1/products/filters/options`);
     const result = await response.json();
 
     if (result.success) {
@@ -107,7 +107,7 @@ async function loadProducts() {
       }
     }
 
-    const response = await fetch(`${API_BASE}/products?${params}`);
+    const response = await fetch(`${API_BASE}/api/v1/products?${params}`);
     const result = await response.json();
 
     if (result.success) {
@@ -239,7 +239,7 @@ async function generateSampleData() {
   button.disabled = true;
 
   try {
-    const response = await fetch(`${API_BASE}/products/generate`, {
+    const response = await fetch(`${API_BASE}/api/v1/products/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

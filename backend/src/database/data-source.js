@@ -23,10 +23,12 @@ export const AppDataSource = new DataSource({
   migrations: ["src/database/migrations/*.js"],
   subscribers: ["src/database/subscribers/*.js"],
   migrationsTableName: "migrations_history",
+  // SSL Configuration
   ssl:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "production" && process.env.DB_SSL === "true"
       ? { rejectUnauthorized: false }
       : false,
+  // Connection pool settings
   extra: {
     max: 20, // Maximum number of connections
     min: 5, // Minimum number of connections
